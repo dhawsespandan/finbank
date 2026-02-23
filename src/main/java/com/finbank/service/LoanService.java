@@ -18,19 +18,14 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
 
-    /**
-     * Core business logic:
-     * Auto-approve if (existingTotalLoans + newAmount) < 10% of originalBalance
-     * Otherwise mark PENDING for employee review.
-     */
     public LoanApplication applyForLoan(String customerUsername, Double amount, String purpose) {
         User customer = userRepository.findByUsername(customerUsername)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        double originalBalance = customer.getOriginalBalance();  // e.g. 100000
-        double threshold = originalBalance * 0.10;               // e.g. 10000
-        double currentTotal = customer.getTotalLoanedAmount();   // e.g. 9000
-        double projectedTotal = currentTotal + amount;           // e.g. 11000
+        double originalBalance = customer.getOriginalBalance();
+        double threshold = originalBalance * 0.10;
+        double currentTotal = customer.getTotalLoanedAmount();
+        double projectedTotal = currentTotal + amount;
 
         LoanApplication loan = new LoanApplication();
         loan.setCustomerId(customer.getId());
@@ -41,16 +36,12 @@ public class LoanService {
         loan.setAppliedAt(LocalDateTime.now());
 
         if (projectedTotal < threshold) {
-            // AUTO-APPROVE
             loan.setStatus("APPROVED");
             loan.setApprovedBy("AUTO");
             loan.setReviewedAt(LocalDateTime.now());
-
-            // Update customer's running loan total
             customer.setTotalLoanedAmount(projectedTotal);
             userRepository.save(customer);
         } else {
-            // Needs employee review
             loan.setStatus("PENDING");
         }
 
@@ -80,19 +71,45 @@ public class LoanService {
         if ("APPROVE".equalsIgnoreCase(decision)) {
             loan.setStatus("APPROVED");
             loan.setApprovedBy(employeeUsername);
-
-            // Update customer's total loaned amount
             User customer = userRepository.findById(loan.getCustomerId())
                     .orElseThrow(() -> new RuntimeException("Customer not found"));
             customer.setTotalLoanedAmount(customer.getTotalLoanedAmount() + loan.getAmount());
             userRepository.save(customer);
-
         } else if ("REJECT".equalsIgnoreCase(decision)) {
             loan.setStatus("REJECTED");
             loan.setRejectedBy(employeeUsername);
         }
 
         return loanRepository.save(loan);
+    }
+
+    public LoanApplication markAsPaid(String loanId) {
+        LoanApplication loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (!"APPROVED".equals(loan.getStatus())) {
+            throw new RuntimeException("Only approved loans can be marked as paid");
+        }
+        if (loan.isPaid()) {
+            throw new RuntimeException("Loan already marked as paid");
+        }
+
+        loan.setPaid(true);
+        loan.setPaidAt(LocalDateTime.now().toString());
+
+        User customer = userRepository.findById(loan.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        double newTotal = Math.max(0, customer.getTotalLoanedAmount() - loan.getAmount());
+        customer.setTotalLoanedAmount(newTotal);
+        userRepository.save(customer);
+
+        return loanRepository.save(loan);
+    }
+
+    public List<LoanApplication> getAllApprovedLoans() {
+        return loanRepository.findAll().stream()
+                .filter(l -> "APPROVED".equals(l.getStatus()))
+                .toList();
     }
 
     public Map<String, Object> getCustomerSummary(String customerUsername) {

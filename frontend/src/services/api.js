@@ -17,3 +17,6 @@ export const getMySummary = () => API.get('/loans/my-summary');
 
 export const getPendingLoans = () => API.get('/loans/pending');
 export const reviewLoan = (id, decision) => API.post(`/loans/review/${id}`, { decision });
+
+export const getAllApprovedLoans = () => API.get('/loans/all-approved');
+export const markLoanPaid = (id) => API.put(`/loans/${id}/mark-paid`);

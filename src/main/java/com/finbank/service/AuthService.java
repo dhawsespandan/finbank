@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,14 @@ public class AuthService {
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
+        }
+
+        if ("CUSTOMER".equals(user.getRole())) {
+            double randomBalance = 50000 + (new Random().nextDouble() * 150000);
+            double roundedBalance = Math.round(randomBalance / 100.0) * 100.0;
+            user.setAccountBalance(roundedBalance);
+            user.setOriginalBalance(roundedBalance);
+            userRepository.save(user);
         }
 
         String token = jwtConfig.generateToken(username, user.getRole());

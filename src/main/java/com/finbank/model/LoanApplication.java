@@ -25,4 +25,7 @@ public class LoanApplication {
 
     private LocalDateTime appliedAt;
     private LocalDateTime reviewedAt;
+
+    private boolean paid = false;
+    private String paidAt;
 }

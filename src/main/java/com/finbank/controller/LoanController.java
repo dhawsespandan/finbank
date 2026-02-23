@@ -15,7 +15,6 @@ public class LoanController {
 
     private final LoanService loanService;
 
-    // Customer applies for a loan
     @PostMapping("/apply")
     public ResponseEntity<?> apply(@RequestBody Map<String, Object> body,
                                    @AuthenticationPrincipal String username) {
@@ -28,25 +27,21 @@ public class LoanController {
         }
     }
 
-    // Customer views their own loans
     @GetMapping("/my-loans")
     public ResponseEntity<?> myLoans(@AuthenticationPrincipal String username) {
         return ResponseEntity.ok(loanService.getCustomerLoans(username));
     }
 
-    // Customer views their account summary
     @GetMapping("/my-summary")
     public ResponseEntity<?> mySummary(@AuthenticationPrincipal String username) {
         return ResponseEntity.ok(loanService.getCustomerSummary(username));
     }
 
-    // Employee views pending loans
     @GetMapping("/pending")
     public ResponseEntity<?> pendingLoans() {
         return ResponseEntity.ok(loanService.getPendingLoans());
     }
 
-    // Employee approves or rejects a loan
     @PostMapping("/review/{loanId}")
     public ResponseEntity<?> review(@PathVariable String loanId,
                                     @RequestBody Map<String, String> body,
@@ -56,5 +51,19 @@ public class LoanController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @PutMapping("/{id}/mark-paid")
+    public ResponseEntity<?> markAsPaid(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(loanService.markAsPaid(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/all-approved")
+    public ResponseEntity<?> getAllApproved() {
+        return ResponseEntity.ok(loanService.getAllApprovedLoans());
     }
 }

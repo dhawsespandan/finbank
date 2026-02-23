@@ -39,7 +39,6 @@ export default function CustomerDashboard() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f8f6f1' }}>
       <Header />
 
-      {/* Page Title Bar */}
       <div style={{ background: '#1a3a5c', padding: '32px 60px' }}>
         <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '8px' }}>Customer Portal</p>
         <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', margin: 0 }}>Welcome, {fullName}</h1>
@@ -71,11 +70,7 @@ export default function CustomerDashboard() {
         )}
 
         {/* Apply Form */}
-        <div style={{
-          background: '#fff', marginBottom: '32px',
-          boxShadow: '0 2px 12px rgba(26,58,92,0.08)',
-          overflow: 'hidden'
-        }}>
+        <div style={{ background: '#fff', marginBottom: '32px', boxShadow: '0 2px 12px rgba(26,58,92,0.08)', overflow: 'hidden' }}>
           <div style={{ background: '#1a3a5c', padding: '16px 28px' }}>
             <h3 style={{ color: '#fff', margin: 0, fontSize: '16px', letterSpacing: '1px' }}>APPLY FOR A LOAN</h3>
           </div>
@@ -115,41 +110,43 @@ export default function CustomerDashboard() {
           <div style={{ background: '#1a3a5c', padding: '16px 28px' }}>
             <h3 style={{ color: '#fff', margin: 0, fontSize: '16px', letterSpacing: '1px' }}>MY LOAN HISTORY</h3>
           </div>
-          <div style={{ padding: '0' }}>
-            {loans.length === 0 ? (
-              <p style={{ color: '#888', padding: '32px 28px', textAlign: 'center' }}>No loan applications yet.</p>
-            ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f8f6f1' }}>
-                    {['Amount', 'Purpose', 'Status', 'Applied At', 'Reviewed By'].map(h => (
-                      <th key={h} style={th}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {loans.map((l, i) => (
-                    <tr key={l.id} style={{ borderBottom: '1px solid #eee' }}>
-                      <td style={td}>₹{l.amount?.toLocaleString()}</td>
-                      <td style={td}>{l.purpose}</td>
-                      <td style={td}>
-                        <span style={{
-                          padding: '4px 12px', fontSize: '12px', fontWeight: '600',
-                          letterSpacing: '0.5px', textTransform: 'uppercase',
-                          background: l.status === 'APPROVED' ? '#d4edda' : l.status === 'REJECTED' ? '#f8d7da' : '#fff3cd',
-                          color: l.status === 'APPROVED' ? '#155724' : l.status === 'REJECTED' ? '#721c24' : '#856404',
-                        }}>
-                          {l.status}
-                        </span>
-                      </td>
-                      <td style={td}>{new Date(l.appliedAt).toLocaleDateString()}</td>
-                      <td style={td}>{l.approvedBy || l.rejectedBy || '—'}</td>
-                    </tr>
+          {loans.length === 0 ? (
+            <p style={{ color: '#888', padding: '32px 28px', textAlign: 'center' }}>No loan applications yet.</p>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: '#f8f6f1' }}>
+                  {['Amount', 'Purpose', 'Status', 'Applied At', 'Reviewed By'].map(h => (
+                    <th key={h} style={th}>{h}</th>
                   ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+                </tr>
+              </thead>
+              <tbody>
+                {loans.map((l) => (
+                  <tr key={l.id} style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={td}>₹{l.amount?.toLocaleString()}</td>
+                    <td style={td}>{l.purpose}</td>
+                    <td style={td}>
+                      <span style={{
+                        padding: '4px 12px', fontSize: '12px', fontWeight: '600',
+                        letterSpacing: '0.5px', textTransform: 'uppercase',
+                        background: l.paid ? '#cce5ff'
+                                  : l.status === 'APPROVED' ? '#d4edda'
+                                  : l.status === 'REJECTED' ? '#f8d7da' : '#fff3cd',
+                        color: l.paid ? '#004085'
+                             : l.status === 'APPROVED' ? '#155724'
+                             : l.status === 'REJECTED' ? '#721c24' : '#856404',
+                      }}>
+                        {l.paid ? 'PAID' : l.status}
+                      </span>
+                    </td>
+                    <td style={td}>{new Date(l.appliedAt).toLocaleDateString()}</td>
+                    <td style={td}>{l.approvedBy || l.rejectedBy || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
       <Footer />
