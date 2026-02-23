@@ -22,17 +22,16 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
-        // Determine role from username prefix
+        String username = user.getUsername();
         String role;
-        if (user.getUsername().startsWith("cus")) {
+
+        if (username.startsWith("cus")) {
             role = "CUSTOMER";
-            user.setAccountBalance(100000.0);   // Default starting balance
-            user.setOriginalBalance(100000.0);  // Fixed reference for 10% calc
+            user.setAccountBalance(100000.0);
+            user.setOriginalBalance(100000.0);
             user.setTotalLoanedAmount(0.0);
-        } else if (user.getUsername().startsWith("emp")) {
-            role = "EMPLOYEE";
         } else {
-            throw new RuntimeException("Username must start with 'cus' or 'emp'");
+            throw new RuntimeException("Registration is only allowed for customers. Username must start with 'cus'");
         }
 
         user.setRole(role);
@@ -40,8 +39,8 @@ public class AuthService {
         User saved = userRepository.save(user);
 
         String token = jwtConfig.generateToken(saved.getUsername(), role);
-        return Map.of("token", token, "role", role, "username", saved.getUsername(),
-                "fullName", saved.getFullName());
+        return Map.of("token", token, "role", role,
+                "username", saved.getUsername(), "fullName", saved.getFullName());
     }
 
     public Map<String, Object> login(String username, String password) {

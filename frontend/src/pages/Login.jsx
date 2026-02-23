@@ -18,7 +18,9 @@ export default function Login() {
       localStorage.setItem('role', res.data.role);
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('fullName', res.data.fullName);
-      navigate(res.data.role === 'CUSTOMER' ? '/customer' : '/employee');
+      navigate(res.data.role === 'CUSTOMER' ? '/customer'
+             : res.data.role === 'MANAGER' ? '/manager'
+             : '/employee');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     }
@@ -30,9 +32,6 @@ export default function Login() {
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={formCard}>
           <h2 style={{ color: '#2B5CA8', marginBottom: '8px' }}>Login to Fin Bank</h2>
-          <p style={{ color: '#888', fontSize: '13px', marginBottom: '24px' }}>
-            Customer: <b>cusXXXXXX</b> &nbsp;|&nbsp; Employee: <b>empXXXXXX</b>
-          </p>
           <form onSubmit={handleSubmit}>
             <input placeholder="Username (cus/emp + 6 digits)"
               value={form.username}

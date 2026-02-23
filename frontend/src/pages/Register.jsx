@@ -13,8 +13,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
     const u = form.username;
-    if (!u.startsWith('cus') && !u.startsWith('emp')) {
-      setError('Username must start with cus (customer) or emp (employee)');
+    if (!u.startsWith('cus')) {
+      setError('Only customer accounts can be registered here.');
       return;
     }
     try {
@@ -35,9 +35,6 @@ export default function Register() {
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={formCard}>
           <h2 style={{ color: '#2B5CA8', marginBottom: '8px' }}>Create Account</h2>
-          <p style={{ color: '#888', fontSize: '13px', marginBottom: '24px' }}>
-            Use <b>cusXXXXXX</b> for customer &nbsp;|&nbsp; <b>empXXXXXX</b> for employee
-          </p>
           <form onSubmit={handleSubmit}>
             <input placeholder="Full Name"
               value={form.fullName}
