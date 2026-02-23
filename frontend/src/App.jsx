@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import CustomerDashboard from './pages/CustomerDashboard';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
+import About from './pages/About';
 
 function PrivateRoute({ children, role }) {
   const token = localStorage.getItem('token');
@@ -20,6 +21,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
         <Route path="/register" element={<Register />} />
         <Route path="/customer" element={
           <PrivateRoute role="CUSTOMER"><CustomerDashboard /></PrivateRoute>
