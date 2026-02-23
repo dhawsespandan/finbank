@@ -20,54 +20,79 @@ export default function EmployeeDashboard() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f5f7fb' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f8f6f1' }}>
       <Header />
-      <div style={{ padding: '32px 60px', flex: 1 }}>
-        <h2 style={{ color: '#2B5CA8' }}>Employee Dashboard — {fullName}</h2>
-        <p style={{ color: '#666', marginBottom: '24px' }}>Review pending loan applications below.</p>
 
-        <div style={{ background: 'white', padding: '24px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-          <h3 style={{ marginBottom: '16px' }}>
-            Pending Loans
-            <span style={{
-              marginLeft: '12px', background: '#fff3cd', color: '#856404',
-              padding: '2px 10px', borderRadius: '12px', fontSize: '13px'
+      {/* Page Title Bar */}
+      <div style={{ background: '#1a3a5c', padding: '32px 60px' }}>
+        <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '8px' }}>Employee Portal</p>
+        <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', margin: 0 }}>Welcome, {fullName}</h1>
+      </div>
+
+      <div style={{ flex: 1, padding: '40px 60px' }}>
+
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '36px' }}>
+          {[
+            { label: 'Pending Review', value: loans.length, icon: '🕐', color: '#856404', bg: '#fff3cd' },
+            { label: 'Awaiting Action', value: loans.length > 0 ? 'Action Required' : 'All Clear', icon: loans.length > 0 ? '⚠️' : '✅', color: loans.length > 0 ? '#721c24' : '#155724', bg: loans.length > 0 ? '#f8d7da' : '#d4edda' },
+          ].map(c => (
+            <div key={c.label} style={{
+              flex: '0 0 240px', background: '#fff',
+              borderTop: '4px solid #c9a84c',
+              padding: '24px 20px',
+              boxShadow: '0 2px 12px rgba(26,58,92,0.08)'
             }}>
-              {loans.length}
-            </span>
-          </h3>
+              <div style={{ fontSize: '24px', marginBottom: '8px' }}>{c.icon}</div>
+              <div style={{ fontSize: '12px', color: '#888', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '6px' }}>{c.label}</div>
+              <div style={{ fontSize: '22px', fontWeight: '700', color: '#1a3a5c' }}>{c.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pending Loans Table */}
+        <div style={{ background: '#fff', boxShadow: '0 2px 12px rgba(26,58,92,0.08)', overflow: 'hidden' }}>
+          <div style={{ background: '#1a3a5c', padding: '16px 28px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <h3 style={{ color: '#fff', margin: 0, fontSize: '16px', letterSpacing: '1px' }}>PENDING LOAN APPLICATIONS</h3>
+            {loans.length > 0 && (
+              <span style={{ background: '#c9a84c', color: '#1a3a5c', padding: '2px 10px', fontSize: '12px', fontWeight: '700' }}>
+                {loans.length}
+              </span>
+            )}
+          </div>
 
           {loans.length === 0 ? (
-            <p style={{ color: '#888' }}>No pending loans. All caught up! ✅</p>
+            <div style={{ padding: '60px', textAlign: 'center' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+              <p style={{ color: '#888', fontSize: '16px' }}>No pending loans. All caught up!</p>
+            </div>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#2B5CA8', color: 'white' }}>
-                  {['Customer', 'Amount', 'Purpose', 'Applied At', 'Actions'].map(h => (
+                <tr style={{ background: '#f8f6f1' }}>
+                  {['Customer', 'Username', 'Amount', 'Purpose', 'Applied At', 'Actions'].map(h => (
                     <th key={h} style={th}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {loans.map((l, i) => (
-                  <tr key={l.id} style={{ background: i % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                    <td style={td}>
-                      <div style={{ fontWeight: '600' }}>{l.customerName}</div>
-                      <div style={{ fontSize: '12px', color: '#888' }}>{l.customerUsername}</div>
-                    </td>
-                    <td style={td}>₹{l.amount?.toLocaleString()}</td>
+                {loans.map((l) => (
+                  <tr key={l.id} style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={{ ...td, fontWeight: '600', color: '#1a3a5c' }}>{l.customerName}</td>
+                    <td style={{ ...td, color: '#888', fontSize: '13px' }}>{l.customerUsername}</td>
+                    <td style={{ ...td, fontWeight: '600' }}>₹{l.amount?.toLocaleString()}</td>
                     <td style={td}>{l.purpose}</td>
                     <td style={td}>{new Date(l.appliedAt).toLocaleDateString()}</td>
                     <td style={td}>
                       <button
                         onClick={() => handleReview(l.id, 'APPROVE')}
-                        style={{ ...actionBtn, background: '#28a745' }}>
-                        ✅ Approve
+                        style={{ ...actionBtn, background: '#1a3a5c', border: '2px solid #1a3a5c', marginRight: '8px' }}>
+                        Approve
                       </button>
                       <button
                         onClick={() => handleReview(l.id, 'REJECT')}
-                        style={{ ...actionBtn, background: '#dc3545', marginLeft: '8px' }}>
-                        ❌ Reject
+                        style={{ ...actionBtn, background: 'transparent', border: '2px solid #dc3545', color: '#dc3545' }}>
+                        Reject
                       </button>
                     </td>
                   </tr>
@@ -82,9 +107,6 @@ export default function EmployeeDashboard() {
   );
 }
 
-const th = { padding: '12px 16px', textAlign: 'left', fontWeight: '500' };
-const td = { padding: '12px 16px', borderBottom: '1px solid #eee', fontSize: '14px' };
-const actionBtn = {
-  padding: '6px 14px', color: 'white', border: 'none',
-  borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: '600'
-};
+const th = { padding: '12px 20px', textAlign: 'left', fontSize: '12px', letterSpacing: '1px', textTransform: 'uppercase', color: '#666', fontWeight: '600' };
+const td = { padding: '14px 20px', fontSize: '14px', color: '#333' };
+const actionBtn = { padding: '6px 16px', cursor: 'pointer', fontSize: '12px', fontWeight: '600', letterSpacing: '0.5px', fontFamily: 'inherit', color: '#fff' };

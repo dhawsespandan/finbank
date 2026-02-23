@@ -8,6 +8,7 @@ export default function CustomerDashboard() {
   const [summary, setSummary] = useState(null);
   const [form, setForm] = useState({ amount: '', purpose: '' });
   const [message, setMessage] = useState('');
+  const [msgType, setMsgType] = useState('');
   const fullName = localStorage.getItem('fullName');
 
   const loadData = async () => {
@@ -24,97 +25,131 @@ export default function CustomerDashboard() {
     try {
       const res = await applyLoan({ amount: parseFloat(form.amount), purpose: form.purpose });
       const status = res.data.status;
-      setMessage(status === 'APPROVED'
-        ? '✅ Loan auto-approved!'
-        : '🕐 Loan submitted for employee review.');
+      setMsgType(status === 'APPROVED' ? 'success' : 'pending');
+      setMessage(status === 'APPROVED' ? 'Loan auto-approved successfully!' : 'Loan submitted for employee review.');
       setForm({ amount: '', purpose: '' });
       loadData();
     } catch (err) {
-      setMessage('❌ ' + (err.response?.data?.error || 'Error applying for loan'));
+      setMsgType('error');
+      setMessage(err.response?.data?.error || 'Error applying for loan');
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f5f7fb' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#f8f6f1' }}>
       <Header />
-      <div style={{ padding: '32px 60px', flex: 1 }}>
-        <h2 style={{ color: '#2B5CA8' }}>Welcome, {fullName} 👋</h2>
+
+      {/* Page Title Bar */}
+      <div style={{ background: '#1a3a5c', padding: '32px 60px' }}>
+        <p style={{ color: '#c9a84c', fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '8px' }}>Customer Portal</p>
+        <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', margin: 0 }}>Welcome, {fullName}</h1>
+      </div>
+
+      <div style={{ flex: 1, padding: '40px 60px' }}>
 
         {/* Summary Cards */}
         {summary && (
-          <div style={{ display: 'flex', gap: '20px', margin: '20px 0' }}>
+          <div style={{ display: 'flex', gap: '20px', marginBottom: '36px' }}>
             {[
-              { label: 'Account Balance', value: `₹${summary.accountBalance?.toLocaleString()}` },
-              { label: 'Total Loans Taken', value: `₹${summary.totalLoanedAmount?.toLocaleString()}` },
-              { label: 'Auto-Approve Limit', value: `₹${summary.autoApproveThreshold?.toLocaleString()}` },
-              { label: 'Remaining Auto Limit', value: `₹${summary.remainingAutoApproveLimit?.toLocaleString()}` },
+              { label: 'Account Balance', value: `₹${summary.accountBalance?.toLocaleString()}`, icon: '🏦' },
+              { label: 'Total Loans Taken', value: `₹${summary.totalLoanedAmount?.toLocaleString()}`, icon: '📋' },
+              { label: 'Auto-Approve Limit', value: `₹${summary.autoApproveThreshold?.toLocaleString()}`, icon: '✅' },
+              { label: 'Remaining Auto Limit', value: `₹${summary.remainingAutoApproveLimit?.toLocaleString()}`, icon: '💰' },
             ].map(c => (
-              <div key={c.label} style={summaryCard}>
-                <div style={{ fontSize: '13px', color: '#666' }}>{c.label}</div>
-                <div style={{ fontSize: '22px', fontWeight: '700', color: '#2B5CA8' }}>{c.value}</div>
+              <div key={c.label} style={{
+                flex: 1, background: '#fff',
+                borderTop: '4px solid #c9a84c',
+                padding: '24px 20px',
+                boxShadow: '0 2px 12px rgba(26,58,92,0.08)'
+              }}>
+                <div style={{ fontSize: '24px', marginBottom: '8px' }}>{c.icon}</div>
+                <div style={{ fontSize: '12px', color: '#888', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '6px' }}>{c.label}</div>
+                <div style={{ fontSize: '22px', fontWeight: '700', color: '#1a3a5c' }}>{c.value}</div>
               </div>
             ))}
           </div>
         )}
 
         {/* Apply Form */}
-        <div style={sectionCard}>
-          <h3 style={{ marginBottom: '16px' }}>Apply for a Loan</h3>
-          <form onSubmit={handleApply} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
-            <div>
-              <label style={labelStyle}>Amount (₹)</label>
-              <input type="number" min="1" placeholder="e.g. 5000"
-                value={form.amount}
-                onChange={e => setForm({ ...form, amount: e.target.value })}
-                style={inputStyle} required />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>Purpose</label>
-              <input placeholder="e.g. Home renovation"
-                value={form.purpose}
-                onChange={e => setForm({ ...form, purpose: e.target.value })}
-                style={inputStyle} required />
-            </div>
-            <button type="submit" style={submitBtn}>APPLY</button>
-          </form>
-          {message && <p style={{ marginTop: '12px', fontWeight: '500' }}>{message}</p>}
+        <div style={{
+          background: '#fff', marginBottom: '32px',
+          boxShadow: '0 2px 12px rgba(26,58,92,0.08)',
+          overflow: 'hidden'
+        }}>
+          <div style={{ background: '#1a3a5c', padding: '16px 28px' }}>
+            <h3 style={{ color: '#fff', margin: 0, fontSize: '16px', letterSpacing: '1px' }}>APPLY FOR A LOAN</h3>
+          </div>
+          <div style={{ padding: '28px' }}>
+            <form onSubmit={handleApply} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div>
+                <label style={labelStyle}>Amount (₹)</label>
+                <input type="number" min="1" placeholder="e.g. 5000"
+                  value={form.amount}
+                  onChange={e => setForm({ ...form, amount: e.target.value })}
+                  style={inputStyle} required />
+              </div>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <label style={labelStyle}>Purpose</label>
+                <input placeholder="e.g. Home renovation"
+                  value={form.purpose}
+                  onChange={e => setForm({ ...form, purpose: e.target.value })}
+                  style={{ ...inputStyle, width: '100%' }} required />
+              </div>
+              <button type="submit" style={submitBtn}>SUBMIT APPLICATION</button>
+            </form>
+            {message && (
+              <div style={{
+                marginTop: '16px', padding: '12px 16px',
+                background: msgType === 'success' ? '#d4edda' : msgType === 'error' ? '#f8d7da' : '#fff3cd',
+                color: msgType === 'success' ? '#155724' : msgType === 'error' ? '#721c24' : '#856404',
+                fontSize: '14px', borderLeft: `4px solid ${msgType === 'success' ? '#28a745' : msgType === 'error' ? '#dc3545' : '#ffc107'}`
+              }}>
+                {message}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Loan History */}
-        <div style={sectionCard}>
-          <h3 style={{ marginBottom: '16px' }}>My Loan History</h3>
-          {loans.length === 0 ? (
-            <p style={{ color: '#888' }}>No loans yet.</p>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#2B5CA8', color: 'white' }}>
-                  {['Amount', 'Purpose', 'Status', 'Applied At', 'Approved By'].map(h => (
-                    <th key={h} style={th}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {loans.map((l, i) => (
-                  <tr key={l.id} style={{ background: i % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                    <td style={td}>₹{l.amount?.toLocaleString()}</td>
-                    <td style={td}>{l.purpose}</td>
-                    <td style={td}>
-                      <span style={{
-                        padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600',
-                        background: l.status === 'APPROVED' ? '#d4edda' : l.status === 'REJECTED' ? '#f8d7da' : '#fff3cd',
-                        color: l.status === 'APPROVED' ? '#155724' : l.status === 'REJECTED' ? '#721c24' : '#856404'
-                      }}>
-                        {l.status}
-                      </span>
-                    </td>
-                    <td style={td}>{new Date(l.appliedAt).toLocaleDateString()}</td>
-                    <td style={td}>{l.approvedBy || '-'}</td>
+        <div style={{ background: '#fff', boxShadow: '0 2px 12px rgba(26,58,92,0.08)', overflow: 'hidden' }}>
+          <div style={{ background: '#1a3a5c', padding: '16px 28px' }}>
+            <h3 style={{ color: '#fff', margin: 0, fontSize: '16px', letterSpacing: '1px' }}>MY LOAN HISTORY</h3>
+          </div>
+          <div style={{ padding: '0' }}>
+            {loans.length === 0 ? (
+              <p style={{ color: '#888', padding: '32px 28px', textAlign: 'center' }}>No loan applications yet.</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f8f6f1' }}>
+                    {['Amount', 'Purpose', 'Status', 'Applied At', 'Reviewed By'].map(h => (
+                      <th key={h} style={th}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {loans.map((l, i) => (
+                    <tr key={l.id} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={td}>₹{l.amount?.toLocaleString()}</td>
+                      <td style={td}>{l.purpose}</td>
+                      <td style={td}>
+                        <span style={{
+                          padding: '4px 12px', fontSize: '12px', fontWeight: '600',
+                          letterSpacing: '0.5px', textTransform: 'uppercase',
+                          background: l.status === 'APPROVED' ? '#d4edda' : l.status === 'REJECTED' ? '#f8d7da' : '#fff3cd',
+                          color: l.status === 'APPROVED' ? '#155724' : l.status === 'REJECTED' ? '#721c24' : '#856404',
+                        }}>
+                          {l.status}
+                        </span>
+                      </td>
+                      <td style={td}>{new Date(l.appliedAt).toLocaleDateString()}</td>
+                      <td style={td}>{l.approvedBy || l.rejectedBy || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
       <Footer />
@@ -122,22 +157,8 @@ export default function CustomerDashboard() {
   );
 }
 
-const summaryCard = {
-  flex: 1, background: 'white', padding: '20px', borderRadius: '8px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.08)', borderLeft: '4px solid #2B5CA8'
-};
-const sectionCard = {
-  background: 'white', padding: '24px', borderRadius: '8px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: '24px'
-};
-const labelStyle = { display: 'block', fontSize: '13px', marginBottom: '6px', color: '#555' };
-const inputStyle = {
-  padding: '10px 14px', border: '1px solid #ccc', borderRadius: '4px',
-  fontSize: '14px', width: '200px'
-};
-const submitBtn = {
-  padding: '10px 24px', background: '#2B5CA8', color: 'white',
-  border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', height: '40px'
-};
-const th = { padding: '12px 16px', textAlign: 'left', fontWeight: '500' };
-const td = { padding: '12px 16px', borderBottom: '1px solid #eee', fontSize: '14px' };
+const labelStyle = { display: 'block', fontSize: '12px', color: '#888', marginBottom: '6px', letterSpacing: '1px', textTransform: 'uppercase' };
+const inputStyle = { padding: '10px 14px', border: '1px solid #ddd', fontSize: '14px', width: '200px', outline: 'none', fontFamily: 'inherit' };
+const submitBtn = { padding: '10px 28px', background: '#1a3a5c', color: 'white', border: '2px solid #1a3a5c', cursor: 'pointer', fontWeight: '600', fontSize: '13px', letterSpacing: '1px', fontFamily: 'inherit', height: '42px' };
+const th = { padding: '12px 20px', textAlign: 'left', fontSize: '12px', letterSpacing: '1px', textTransform: 'uppercase', color: '#666', fontWeight: '600' };
+const td = { padding: '14px 20px', fontSize: '14px', color: '#333' };
