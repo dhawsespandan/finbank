@@ -22,7 +22,7 @@ public class LoanService {
         User customer = userRepository.findByUsername(customerUsername)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        double originalBalance = customer.getOriginalBalance();
+        double originalBalance = customer.getAccountBalance(); // changed from getOriginalBalance()
         double threshold = originalBalance * 0.10;
         double currentTotal = customer.getTotalLoanedAmount();
         double projectedTotal = currentTotal + amount;
@@ -115,11 +115,10 @@ public class LoanService {
     public Map<String, Object> getCustomerSummary(String customerUsername) {
         User customer = userRepository.findByUsername(customerUsername)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-        double threshold = customer.getOriginalBalance() * 0.10;
+        double threshold = customer.getAccountBalance() * 0.10;
         double remaining = threshold - customer.getTotalLoanedAmount();
         return Map.of(
                 "accountBalance", customer.getAccountBalance(),
-                "originalBalance", customer.getOriginalBalance(),
                 "totalLoanedAmount", customer.getTotalLoanedAmount(),
                 "autoApproveThreshold", threshold,
                 "remainingAutoApproveLimit", Math.max(0, remaining)

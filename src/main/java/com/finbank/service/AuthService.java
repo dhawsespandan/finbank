@@ -54,9 +54,9 @@ public class AuthService {
 
         if ("CUSTOMER".equals(user.getRole())) {
             double randomBalance = 50000 + (new Random().nextDouble() * 150000);
-            double roundedBalance = Math.round(randomBalance / 100.0) * 100.0;
+            double roundedBalance = Math.round(randomBalance * 100.0) / 100.0;
             user.setAccountBalance(roundedBalance);
-            user.setOriginalBalance(roundedBalance);
+            // Do NOT touch originalBalance or totalLoanedAmount
             userRepository.save(user);
         }
 
