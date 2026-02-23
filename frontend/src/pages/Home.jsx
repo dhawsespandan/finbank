@@ -11,63 +11,45 @@ export default function Home() {
 
       {/* Hero Section */}
       <section style={{
-        display: 'flex', alignItems: 'stretch',
-        minHeight: '520px', width: '100%'
+        background: 'linear-gradient(135deg, #0f2236 0%, #1a3a5c 60%, #1e4976 100%)',
+        padding: '80px 60px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
-        <div style={{
-          flex: '0 0 55%',
-          background: 'url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80") center/cover no-repeat',
-          minHeight: '520px'
-        }} />
-        <div style={{
-          flex: '0 0 45%',
-          background: '#1a3a5c',
-          display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', alignItems: 'center',
-          padding: '60px 50px', textAlign: 'center'
+        <div style={{ width: '50px', height: '3px', background: '#c9a84c', marginBottom: '28px' }} />
+        <h1 style={{
+          color: '#fff', fontSize: '46px',
+          fontWeight: '700', margin: '0 0 16px',
+          lineHeight: 1.2, letterSpacing: '1px'
         }}>
-          <div style={{
-            width: '50px', height: '3px',
-            background: '#c9a84c', marginBottom: '24px'
-          }} />
-          <h1 style={{
-            color: '#fff', fontSize: '38px',
-            fontWeight: '700', margin: '0 0 16px',
-            lineHeight: 1.2, letterSpacing: '0.5px'
-          }}>
-            Welcome to<br />Fin Bank
-          </h1>
-          <p style={{
-            color: '#a8c4e0', fontSize: '16px',
-            marginBottom: '36px', fontStyle: 'italic'
-          }}>
-            Where the world comes to bank
-          </p>
-          <div style={{
-            width: '50px', height: '3px',
-            background: '#c9a84c', marginBottom: '36px'
-          }} />
-          <button
-            onClick={() => navigate('/login')}
-            style={{
-              background: 'transparent', border: '2px solid #c9a84c',
-              color: '#c9a84c', padding: '14px 40px',
-              fontSize: '14px', letterSpacing: '2px',
-              textTransform: 'uppercase', cursor: 'pointer',
-              fontFamily: 'inherit', transition: 'all 0.3s'
-            }}
-            onMouseEnter={e => {
-              e.target.style.background = '#c9a84c';
-              e.target.style.color = '#1a3a5c';
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = 'transparent';
-              e.target.style.color = '#c9a84c';
-            }}
-          >
-            Get Started
-          </button>
-        </div>
+          Welcome to Fin Bank
+        </h1>
+        <p style={{
+          color: '#a8c4e0', fontSize: '18px',
+          marginBottom: '32px', fontStyle: 'italic'
+        }}>
+          Where the world comes to bank
+        </p>
+        <div style={{ width: '50px', height: '3px', background: '#c9a84c', marginBottom: '36px' }} />
+        <button
+          onClick={() => navigate('/login')}
+          style={{
+            background: 'transparent', border: '2px solid #c9a84c',
+            color: '#c9a84c', padding: '14px 48px',
+            fontSize: '13px', letterSpacing: '2px',
+            textTransform: 'uppercase', cursor: 'pointer',
+            fontFamily: 'inherit', transition: 'all 0.3s'
+          }}
+          onMouseEnter={e => { e.target.style.background = '#c9a84c'; e.target.style.color = '#1a3a5c'; }}
+          onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.color = '#c9a84c'; }}
+        >
+          Get Started
+        </button>
       </section>
 
       {/* Stats Bar */}
