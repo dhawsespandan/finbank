@@ -14,18 +14,23 @@ export default function Header() {
 
   return (
     <header style={{
-      background: '#2B5CA8',
-      padding: '0 32px',
+      background: '#1a3a5c',
+      padding: '0 40px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      height: '64px'
+      height: '64px',
+      width: '100%',
+      boxSizing: 'border-box',
+      position: 'relative',
+      zIndex: 100
     }}>
-      <span style={{ color: 'white', fontSize: '22px', fontWeight: '600', cursor: 'pointer' }}
-            onClick={() => navigate('/')}>
+      <span
+        onClick={() => navigate('/')}
+        style={{ color: 'white', fontSize: '22px', fontWeight: '700', cursor: 'pointer', letterSpacing: '1px', fontFamily: 'Georgia, serif' }}>
         Fin Bank
       </span>
-      <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+      <nav style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
         <a href="/" style={navLink}>HOME</a>
         <a href="/about" style={navLink}>ABOUT US</a>
         {token ? (
@@ -42,9 +47,14 @@ export default function Header() {
 }
 
 const navLink = {
-  color: 'white', textDecoration: 'underline', fontWeight: '500', cursor: 'pointer'
+  color: 'white', textDecoration: 'underline',
+  fontWeight: '500', cursor: 'pointer',
+  fontSize: '13px', letterSpacing: '1px'
 };
 const loginBtn = {
-  background: 'white', color: '#2B5CA8', border: 'none',
-  padding: '8px 20px', fontWeight: '600', cursor: 'pointer', borderRadius: '2px'
+  background: 'white', color: '#1a3a5c',
+  border: 'none', padding: '8px 24px',
+  fontWeight: '700', cursor: 'pointer',
+  fontSize: '13px', letterSpacing: '1px',
+  fontFamily: 'Georgia, serif'
 };
